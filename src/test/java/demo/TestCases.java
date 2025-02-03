@@ -6,26 +6,53 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
+
+import demo.wrappers.FilmsDitails;
+import demo.wrappers.TeamDitails;
 // import io.github.bonigarcia.wdm.WebDriverManager;
 import demo.wrappers.Wrappers;
 
 public class TestCases {
     ChromeDriver driver;
+    @Test(enabled = true)
+    public void testCase01() throws InterruptedException{
+        System.out.println(" Start Test Case 1 - Collect Hockey Score Data");
+        // naviage to particular url
+        Wrappers.nevaigateToURLWait(driver, "https://www.scrapethissite.com/pages/");
+        // click on Hockey Teams
+        Wrappers.clickOnElement(driver, By.partialLinkText("Hockey Teams"));
+        ArrayList<TeamDitails> teamDitails =  Wrappers.collectTeamNameAndYearAndWinPercentLessThanFourty(driver, By.xpath("//tr[@class='team']"), 1);
+        // printing information 
+        Wrappers.printingArayListData(teamDitails);
+        // convert arrayList object to json File
+        boolean status = Wrappers.covertArrayListToJsonFile(teamDitails);
+        Assert.assertTrue(status);
+        System.out.println(" End Test Case 1 - Collect Hockey Score Data");
+    }
 
-    /*
-     * TODO: Write your tests here with testng @Test annotation. 
-     * Follow `testCase01` `testCase02`... format or what is provided in instructions
-     */
+    @Test(enabled = true)
+    public void testCase02() throws InterruptedException{
+        System.out.println("Start Test Case 2 - Collect Film Award Data");
+        // naviage to particular url
+        Wrappers.nevaigateToURLWait(driver, "https://www.scrapethissite.com/pages/");
+        // click on Oscar Winning Films
+        Wrappers.clickOnElement(driver, By.partialLinkText("Oscar Winning Films"));
+        ArrayList<FilmsDitails> filmsDitails = Wrappers.stoardTopFiveFilmDitailsIntoArrayList(driver, By.xpath("//a[contains(@class,'year-link')]"));
+        boolean status = Wrappers.covertArrayListToJsonFileForFilm(filmsDitails);
+        Assert.assertTrue(status);
+        status = Wrappers.fileIsPresent("oscar-winner-data.json");
+        Assert.assertTrue(status);
+        System.out.println("End Test Case 2 - Collect Film Award Data");
 
-     
-    /*
-     * Do not change the provided methods unless necessary, they will help in automation and assessment
-     */
+    }
     @BeforeTest
     public void startBrowser()
     {
